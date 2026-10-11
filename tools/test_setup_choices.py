@@ -328,6 +328,7 @@ class HipVision(unittest.TestCase):
             self.assertEqual(got, "none")
             self.assertIn("--vision cpu", out)
 
+    @mock.patch.object(setup, "cpu_info", lambda: ("Test CPU", True, False))  # matches the cached engine's CPU floor
     def build(self, meta, vision, vexe=False):
         """build_engine_hip with an engine that is already built: only the encoder can be missing."""
         with tempfile.TemporaryDirectory() as d:
@@ -524,6 +525,7 @@ class DesktopReserveTip(unittest.TestCase):
 class CudaVision(unittest.TestCase):
     """#411: the image encoder setup compiles beside the CUDA engine is built for this PC, not portable."""
 
+    @mock.patch.object(setup, "cpu_info", lambda: ("Test CPU", True, False))  # matches the cached engine's CPU floor
     def test_the_encoder_is_built_native(self):
         for vision in ("gpu", "cpu"):
             with self.subTest(vision), tempfile.TemporaryDirectory() as d:
@@ -585,6 +587,7 @@ class HostCompilers(unittest.TestCase):
         with mock.patch.dict(os.environ, {"CC": "", "CXX": "", "CUDAHOSTCXX": ""}):
             self.assertEqual(setup.host_compiler_defs(True), [])
 
+    @mock.patch.object(setup, "cpu_info", lambda: ("Test CPU", True, False))  # compiler definitions need no host probe
     def test_the_defs_reach_cmake(self):
         """The engine's and the CUDA encoder's configure both take them."""
         with tempfile.TemporaryDirectory() as d:

@@ -153,6 +153,7 @@ class GpuLists(unittest.TestCase):
                         cfg.unlink()
                         (sysroot / "include/hip/hip_runtime.h").unlink()
 
+    @mock.patch.object(setup, "cpu_info", lambda: ("Test CPU", True, False))  # the fixture's AVX2 CPU, not the host
     def test_build_for_every_arch(self):
         """build_engine_hip compiles for the set of the chosen cards' archs and records it in BUILD.json."""
         calls = {}
