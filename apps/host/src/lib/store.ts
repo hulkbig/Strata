@@ -721,6 +721,13 @@ export function takeParked(sessionId: string, index = 0): string | undefined {
   return list[index];
 }
 
+/** A route can render before its selection effect, or an old effect can run after a switch. Leave that chat's queue intact. */
+export function sendParked(sessionId: string) {
+  if (state.activeSession !== sessionId || state.streaming) return;
+  const next = takeParked(sessionId);
+  if (next !== undefined) void sendMessage(next);
+}
+
 export function setDoneSound(doneSound: boolean) {
   set({ doneSound });
   savePrefs();
