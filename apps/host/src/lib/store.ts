@@ -1381,6 +1381,11 @@ export function setChatPreferences(id: string | undefined, preferences: NonNulla
   // A mode change applies to the very next tool call of a turn that is already running (a goal and its helpers included).
   if (preferences.mode && liveTurns.get(sessionId)?.agent) void api.post('/api/chat/mode', { sessionId, mode: preferences.mode }).catch(() => undefined);
 }
+/** Collapsing the panel keeps its tabs, but must not restore an open panel next time. */
+export function collapsePreview(sessionId: string | undefined) {
+  if (!sessionId) return;
+  patchSession(sessionId, s => ({ ...s, previewOpen: undefined }));
+}
 export function setPreviewTabClosed(sessionId:string|undefined, artifactId:string, closed:boolean, selected:string|null) {
   if(!sessionId)return;
   patchSession(sessionId,s=>({...s,closedPreviews:closed?[...new Set([...(s.closedPreviews??[]),artifactId])]:(s.closedPreviews??[]).filter(id=>id!==artifactId),previewOpen:selected??undefined}));
